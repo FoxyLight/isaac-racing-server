@@ -4,6 +4,6 @@
   "author": "Zamiell",
   "license": "GPL-3.0",
   "dependencies": {
-    "isaac-racing-common": "^1.0.10"
+    "isaac-racing-common": "github:FoxyLight/isaac-racing-common#ed2ea886f700f742fd6cfd98718af077c983874c"
   }
 }
