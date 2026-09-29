@@ -140,11 +140,3 @@ func validateAndCanonicalizeAdditionalStartingItems(
 	return nil
 }
 
-func intInSlice(value int, values []int) bool {
-	for _, candidate := range values {
-		if value == candidate {
-			return true
-		}
-	}
-	return false
-}
