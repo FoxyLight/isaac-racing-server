@@ -11,7 +11,7 @@ import (
 */
 
 func raceValidateRuleset(s *melody.Session, d *IncomingWebsocketData) bool {
-	ruleset := d.Ruleset
+	ruleset := &d.Ruleset
 
 	// Validate the ruleset format.
 	if ruleset.Format != RaceFormatUnseeded &&
@@ -84,6 +84,16 @@ func raceValidateRuleset(s *melody.Session, d *IncomingWebsocketData) bool {
 			websocketWarning(s, d.Command, msg)
 			return false
 		}
+	}
+
+	if err := validateAndCanonicalizeAdditionalStartingItems(
+		ruleset,
+		allItems,
+		allBuilds,
+		additionalStartingItemsPolicy,
+	); err != nil {
+		websocketWarning(s, d.Command, err.Error())
+		return false
 	}
 
 	if ruleset.Solo {

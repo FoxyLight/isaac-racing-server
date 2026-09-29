@@ -119,6 +119,7 @@ func Init() {
 	// Initialize the needed static maps for items (in constants.go)
 	loadAllItems()
 	loadAllBuilds()
+	loadAdditionalStartingItemsPolicy()
 
 	// Initialize the needed static maps for tournaments (in constants.go)
 	loadAllTournaments()

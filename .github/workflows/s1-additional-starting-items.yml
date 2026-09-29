@@ -1,0 +1,53 @@
+name: S1 Additional Starting Items Verification
+
+on:
+  push:
+    branches:
+      - feature/additional-starting-items-v1
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "lib/package.json"
+      - "src/**"
+      - ".github/workflows/s1-additional-starting-items.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.19"
+
+      - name: Install pinned common dependency
+        working-directory: lib
+        run: npm install --package-lock=false
+
+      - name: Build and run full Go tests
+        run: bash build.sh
+
+      - name: Run focused S1 tests
+        working-directory: src
+        run: go test -run AdditionalStartingItems
+
+      - name: Check committed diff whitespace
+        run: git diff --check origin/main...HEAD
+
+      - name: Check working tree whitespace
+        run: git diff --check

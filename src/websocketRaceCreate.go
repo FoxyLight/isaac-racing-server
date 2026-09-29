@@ -61,10 +61,14 @@ func websocketRaceCreate(s *melody.Session, d *IncomingWebsocketData) {
 		ruleset.Goal = "The Chest"
 	}
 
-	// Validate the submitted ruleset.
+	// Validate the submitted ruleset after applying server-side defaults. The validator may also
+	// canonicalize server-owned fields, so copy the working ruleset into the incoming payload and
+	// then copy the validated result back out.
+	d.Ruleset = ruleset
 	if !raceValidateRuleset(s, d) {
 		return
 	}
+	ruleset = d.Ruleset
 
 	// Fix the ranking for multiplayer races.
 	if !ruleset.Solo {
