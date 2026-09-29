@@ -1,7 +1,9 @@
 package models
 
 import (
+	"os"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -14,6 +16,7 @@ func TestAdditionalStartingItemsEncoding(t *testing.T) {
 		{name: "none", items: []int{}, want: ""},
 		{name: "one", items: []int{4}, want: "4"},
 		{name: "canonical list", items: []int{4, 12, 182}, want: "4,12,182"},
+		{name: "canonicalizes unsorted input", items: []int{182, 4, 12}, want: "4,12,182"},
 	}
 
 	for _, test := range tests {
@@ -52,5 +55,25 @@ func TestAdditionalStartingItemsDecoding(t *testing.T) {
 func TestAdditionalStartingItemsDecodingRejectsInvalidStorage(t *testing.T) {
 	if _, err := decodeAdditionalStartingItems("4,nope,12"); err == nil {
 		t.Fatal("expected invalid stored data to fail decoding")
+	}
+}
+
+func TestAdditionalStartingItemsSchemaContract(t *testing.T) {
+	for _, filePath := range []string{
+		"../../install/database_schema.sql",
+		"../../install/additional_starting_items_v1.sql",
+	} {
+		content, err := os.ReadFile(filePath)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		sql := string(content)
+		if !strings.Contains(sql, "additional_starting_items") ||
+			!strings.Contains(sql, "VARCHAR(64)") ||
+			!strings.Contains(sql, "NOT NULL") ||
+			!strings.Contains(sql, "DEFAULT ''") {
+			t.Fatalf("%s does not preserve the Additional Starting Items storage contract", filePath)
+		}
 	}
 }
