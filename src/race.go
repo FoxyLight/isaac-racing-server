@@ -433,8 +433,9 @@ func (race *Race) Finish() {
 		Character:       race.Ruleset.Character,
 		Goal:            string(race.Ruleset.Goal),
 		Difficulty:      race.Ruleset.Difficulty,
-		StartingBuild:   race.Ruleset.StartingBuildIndex,
-		Seed:            race.Ruleset.Seed,
+		StartingBuild:           race.Ruleset.StartingBuildIndex,
+		AdditionalStartingItems: append([]int(nil), race.Ruleset.AdditionalStartingItems...),
+		Seed:                    race.Ruleset.Seed,
 		Captain:         race.Captain,
 		DatetimeStarted: race.DatetimeStarted,
 	}
