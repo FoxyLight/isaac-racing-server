@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -21,8 +22,8 @@ type Race struct {
 	Difficulty    string
 	StartingBuild           int
 	AdditionalStartingItems []int
-	Seed          string
-	Captain       string
+	Seed                    string
+	Captain                 string
 	/* This is stored in the database as a user_id reference, but we convert it during the SELECT */
 	DatetimeCreated  int64
 	DatetimeStarted  int64
@@ -189,8 +190,11 @@ func encodeAdditionalStartingItems(items []int) string {
 		return ""
 	}
 
-	values := make([]string, len(items))
-	for i, itemID := range items {
+	canonicalItems := append([]int(nil), items...)
+	sort.Ints(canonicalItems)
+
+	values := make([]string, len(canonicalItems))
+	for i, itemID := range canonicalItems {
 		values[i] = strconv.Itoa(itemID)
 	}
 	return strings.Join(values, ",")
