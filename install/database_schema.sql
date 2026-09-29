@@ -138,7 +138,7 @@ CREATE TABLE races (
     /* -1 for unseeded & diversity races, otherwise matches the build index from the "builds.json" file. */
     /* This corresponds to `StartingBuild` in the `Races` struct and `StartingBuildIndex` in the `Ruleset` struct. */
     starting_build             INT          NULL      DEFAULT -1,
-    additional_starting_items  VARCHAR(64)  NOT NULL  DEFAULT "",
+    additional_starting_items  VARCHAR(64)  NOT NULL  DEFAULT '',
 
     /*
         Other fields
