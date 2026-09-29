@@ -139,4 +139,3 @@ func validateAndCanonicalizeAdditionalStartingItems(
 	sort.Ints(ruleset.AdditionalStartingItems)
 	return nil
 }
-
