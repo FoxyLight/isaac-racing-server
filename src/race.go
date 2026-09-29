@@ -33,7 +33,8 @@ type Ruleset struct {
 	Goal               RaceGoal   `json:"goal"`
 	StartingBuildIndex int        `json:"startingBuildIndex"`
 	Seed               string     `json:"seed"`
-	Difficulty         string     `json:"difficulty"`
+	Difficulty              string     `json:"difficulty"`
+	AdditionalStartingItems []int      `json:"additionalStartingItems"`
 }
 
 /*
