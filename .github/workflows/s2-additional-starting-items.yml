@@ -1,0 +1,45 @@
+name: S2 Additional Starting Items Persistence Verification
+
+on:
+  push:
+    branches:
+      - feature/additional-starting-items-v1-s2
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "install/**"
+      - "src/models/**"
+      - "src/race.go"
+      - ".github/workflows/s2-additional-starting-items.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.19"
+
+      - name: Build and run existing server tests
+        run: bash build.sh
+
+      - name: Run focused persistence tests
+        working-directory: src/models
+        run: go test -run AdditionalStartingItems
+
+      - name: Check committed diff whitespace
+        run: git diff --check origin/main...HEAD
+
+      - name: Check working tree whitespace
+        run: git diff --check
