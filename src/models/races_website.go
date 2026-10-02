@@ -16,7 +16,8 @@ type RaceHistory struct {
 	RaceType         sql.NullString
 	RaceFormat       sql.NullString
 	RaceChar         sql.NullString
-	RaceGoal         sql.NullString
+	RaceGoal                   sql.NullString
+	AdditionalStartingItems    []int
 	RaceDateStart    sql.NullTime
 	RaceDateFinished sql.NullTime
 	RaceParticipants []RaceHistoryParticipants
@@ -50,6 +51,7 @@ func (*Races) GetRacesHistory(currentPage int, racesPerPage int, raceOffset int)
 			r.format,
 			r.player_type,
 			r.goal,
+			r.additional_starting_items,
 			r.datetime_created,
 			r.datetime_finished
 		FROM
@@ -76,6 +78,7 @@ func (*Races) GetRacesHistory(currentPage int, racesPerPage int, raceOffset int)
 		raceRacers := make([]RaceHistoryParticipants, 0)
 
 		var race RaceHistory
+		var additionalStartingItems string
 		if err := rows.Scan(
 			&race.RaceID,
 			&race.RaceSize,
@@ -83,10 +86,16 @@ func (*Races) GetRacesHistory(currentPage int, racesPerPage int, raceOffset int)
 			&race.RaceFormat,
 			&race.RaceChar,
 			&race.RaceGoal,
+			&additionalStartingItems,
 			&race.RaceDateStart,
 			&race.RaceDateFinished,
 		); err != nil {
 			return raceHistory, 0, err
+		}
+		if v, err := decodeAdditionalStartingItems(additionalStartingItems); err != nil {
+			return raceHistory, 0, err
+		} else {
+			race.AdditionalStartingItems = v
 		}
 		race.RaceParticipants = nil
 
@@ -177,6 +186,7 @@ func (*Races) GetRaceHistory(raceID int) (RaceHistory, error) {
 			r.format,
 			r.player_type,
 			r.goal,
+			r.additional_starting_items,
 			r.datetime_created,
 			r.datetime_finished
 		FROM
@@ -199,16 +209,23 @@ func (*Races) GetRaceHistory(raceID int) (RaceHistory, error) {
 	for rows.Next() {
 		raceRacers := make([]RaceHistoryParticipants, 0)
 
+		var additionalStartingItems string
 		if err := rows.Scan(
 			&race.RaceID,
 			&race.RaceType,
 			&race.RaceFormat,
 			&race.RaceChar,
 			&race.RaceGoal,
+			&additionalStartingItems,
 			&race.RaceDateStart,
 			&race.RaceDateFinished,
 		); err != nil {
 			return race, err
+		}
+		if v, err := decodeAdditionalStartingItems(additionalStartingItems); err != nil {
+			return race, err
+		} else {
+			race.AdditionalStartingItems = v
 		}
 		race.RaceParticipants = nil
 
@@ -285,6 +302,7 @@ func (*Races) GetSoloRankedRaceProfileHistory(user string, racesPerPage int) ([]
 			r.format,
 			r.player_type,
 			r.goal,
+			r.additional_starting_items,
 			r.datetime_created,
 			r.datetime_finished
 		FROM
@@ -319,16 +337,23 @@ func (*Races) GetSoloRankedRaceProfileHistory(user string, racesPerPage int) ([]
 		raceRacers := make([]RaceHistoryParticipants, 0)
 
 		var race RaceHistory
+		var additionalStartingItems string
 		if err := rows.Scan(
 			&race.RaceID,
 			&race.RaceType,
 			&race.RaceFormat,
 			&race.RaceChar,
 			&race.RaceGoal,
+			&additionalStartingItems,
 			&race.RaceDateStart,
 			&race.RaceDateFinished,
 		); err != nil {
 			return raceHistory, err
+		}
+		if v, err := decodeAdditionalStartingItems(additionalStartingItems); err != nil {
+			return raceHistory, err
+		} else {
+			race.AdditionalStartingItems = v
 		}
 		race.RaceParticipants = nil
 
@@ -412,6 +437,7 @@ func (*Races) GetAllRaceProfileHistory(user string, racesPerPage int) ([]RaceHis
 			r.format,
 			r.player_type,
 			r.goal,
+			r.additional_starting_items,
 			r.datetime_created,
 			r.datetime_finished
 		FROM
@@ -442,16 +468,23 @@ func (*Races) GetAllRaceProfileHistory(user string, racesPerPage int) ([]RaceHis
 		raceRacers := make([]RaceHistoryParticipants, 0)
 
 		var race RaceHistory
+		var additionalStartingItems string
 		if err := rows.Scan(
 			&race.RaceID,
 			&race.RaceType,
 			&race.RaceFormat,
 			&race.RaceChar,
 			&race.RaceGoal,
+			&additionalStartingItems,
 			&race.RaceDateStart,
 			&race.RaceDateFinished,
 		); err != nil {
 			return raceHistory, err
+		}
+		if v, err := decodeAdditionalStartingItems(additionalStartingItems); err != nil {
+			return raceHistory, err
+		} else {
+			race.AdditionalStartingItems = v
 		}
 		race.RaceParticipants = nil
 

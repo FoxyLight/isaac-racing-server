@@ -2,6 +2,9 @@ package models
 
 import (
 	"database/sql"
+	"sort"
+	"strconv"
+	"strings"
 )
 
 type Races struct{}
@@ -17,9 +20,10 @@ type Race struct {
 	Character     string
 	Goal          string
 	Difficulty    string
-	StartingBuild int
-	Seed          string
-	Captain       string
+	StartingBuild           int
+	AdditionalStartingItems []int
+	Seed                    string
+	Captain                 string
 	/* This is stored in the database as a user_id reference, but we convert it during the SELECT */
 	DatetimeCreated  int64
 	DatetimeStarted  int64
@@ -86,6 +90,7 @@ func (*Races) Finish(race *Race) error {
 			goal = ?,
 			difficulty = ?,
 			starting_build = ?,
+			additional_starting_items = ?,
 			seed = ?,
 			captain = (SELECT id FROM users where username = ?),
 			datetime_started = FROM_UNIXTIME(? / 1000),
@@ -118,6 +123,7 @@ func (*Races) Finish(race *Race) error {
 		race.Goal,
 		race.Difficulty,
 		race.StartingBuild,
+		encodeAdditionalStartingItems(race.AdditionalStartingItems),
 		race.Seed,
 		race.Captain,
 		race.DatetimeStarted,
@@ -177,4 +183,36 @@ func (*Races) Cleanup() ([]int, error) {
 	}
 
 	return leftoverRaces, nil
+}
+
+func encodeAdditionalStartingItems(items []int) string {
+	if len(items) == 0 {
+		return ""
+	}
+
+	canonicalItems := append([]int(nil), items...)
+	sort.Ints(canonicalItems)
+
+	values := make([]string, len(canonicalItems))
+	for i, itemID := range canonicalItems {
+		values[i] = strconv.Itoa(itemID)
+	}
+	return strings.Join(values, ",")
+}
+
+func decodeAdditionalStartingItems(value string) ([]int, error) {
+	if value == "" {
+		return []int{}, nil
+	}
+
+	parts := strings.Split(value, ",")
+	items := make([]int, len(parts))
+	for i, part := range parts {
+		itemID, err := strconv.Atoi(part)
+		if err != nil {
+			return nil, err
+		}
+		items[i] = itemID
+	}
+	return items, nil
 }

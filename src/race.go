@@ -425,18 +425,19 @@ func (race *Race) Finish() {
 
 	// Write it to the database.
 	databaseRace := &models.Race{
-		ID:              race.ID,
-		Name:            race.Name,
-		Ranked:          race.Ruleset.Ranked,
-		Solo:            race.Ruleset.Solo,
-		Format:          string(race.Ruleset.Format),
-		Character:       race.Ruleset.Character,
-		Goal:            string(race.Ruleset.Goal),
-		Difficulty:      race.Ruleset.Difficulty,
-		StartingBuild:   race.Ruleset.StartingBuildIndex,
-		Seed:            race.Ruleset.Seed,
-		Captain:         race.Captain,
-		DatetimeStarted: race.DatetimeStarted,
+		ID:                      race.ID,
+		Name:                    race.Name,
+		Ranked:                  race.Ruleset.Ranked,
+		Solo:                    race.Ruleset.Solo,
+		Format:                  string(race.Ruleset.Format),
+		Character:               race.Ruleset.Character,
+		Goal:                    string(race.Ruleset.Goal),
+		Difficulty:              race.Ruleset.Difficulty,
+		StartingBuild:           race.Ruleset.StartingBuildIndex,
+		AdditionalStartingItems: append([]int(nil), race.Ruleset.AdditionalStartingItems...),
+		Seed:                    race.Ruleset.Seed,
+		Captain:                 race.Captain,
+		DatetimeStarted:         race.DatetimeStarted,
 	}
 	if err := db.Races.Finish(databaseRace); err != nil {
 		logger.Error("Failed to write race #"+strconv.Itoa(race.ID)+" to the database:", err)
